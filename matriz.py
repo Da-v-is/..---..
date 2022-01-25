@@ -1,4 +1,5 @@
-matriz_ori = [ [ 1 , 1 ,3 ] , [ 1, 0 , 1 ] , [ 1 , -2 , 1 ] ]
+#matriz_ori = [ [ 1 , 2 ,3 ] , [ 4, 5 , 6 ] , [ 7 , 8 , 9 ] ]
+matriz_ori = [ [ 1 , 1 ,3 ] , [ 1, 0 , 1 ] , [ 1 , -2 , -1 ] ]
 def imprimir_matriz (matriz_final):
     for i in range(len(matriz_final)):
         a = ''
@@ -7,6 +8,7 @@ def imprimir_matriz (matriz_final):
             if j < len(matriz_final)-1:
                 a += '  '
         print(a)
+        
             
 def matriz_identidad (matriz_o):
     matriz_iden = []
@@ -22,7 +24,9 @@ def matriz_identidad (matriz_o):
     #imprimir_matriz (matriz_iden)
 matriz_iden = matriz_identidad (matriz_ori)
 
-def determinante (valor_1 , valor_2,m_copia,):# solo determinante
+############################################
+
+def determinante (valor_1 , valor_2,m_copia,): # solo determinante
     #=====CAMBIOS DE NOMBRE=====
     val = valor_1[ 0 ]
     diag = valor_1[ 1 ]
@@ -64,8 +68,9 @@ def determinante (valor_1 , valor_2,m_copia,):# solo determinante
         iden[v] = m_resul_id
         print(m_resul)
         print(m_resul_id)
-    #FALTA EL INVERSO DE ARRIBA
     
+        
+########################################
 
 '''def verificar_m (matriz):
     imprimir_matriz (matriz_ori)
@@ -91,59 +96,78 @@ def determinante (valor_1 , valor_2,m_copia,):# solo determinante
             return True
         else:
             return False'''
-    
+#######################################
 def m_inversa (numero ,posicion):
     #======= MENU =======
-    ma_o = matriz_ori
-    val = numero[ 0 ]
-    diag = numero[ 1 ]
+    ma_o = matriz_ori # no
+    ma_i = matriz_iden
+    val = numero[ 0 ] # numeros de las esquinas
+    diag = numero[ 1 ] # numeros de la diagonal
     n_v = posicion[ 0 ]#i
-    n_d = posicion[ 1 ]#j
-    #print(n_v,"----",n_d)
+    n_d = posicion[ 1 ]#k
+    #print("i",n_v,"    k",n_d)
+    
     #===================
-    m_resul = [ ]
-    m_resul_in = [ ]
-    print(ma_o)
+    resta = []
+    resta_i = []
     for j in range(len(ma_o)):
-        m_resul += [ round(-ma_o[ n_d ][ j ]*val + ma_o[ n_v ][ j ] , 2)] 
-        print("---------",-ma_o[ n_d ][ j ],val , ma_o[ n_v ][ j ] )
-    ma_o[n_v] = m_resul
+        resta += [-ma_o[n_v][j]*diag + ma_o[n_d][j]*val]
+        resta_i += [-ma_i[n_v][j]*diag + ma_i[n_d][j]*val]
+        #print( -ma_o[n_v][j],diag ," + ", ma_o[n_d][j],val )
+    #print(resta,n_d)
+    ma_i[n_d] = resta_i
+    ma_o[n_d] = resta
+    
         
     
-def matriz_inversa(m_normal , m_identidad):# matriz final 
+def matriz_inversa(m_normal , m_identidad):# matriz final
+    # ______ Cambiar Nombre _______
     m_n = m_normal
-    m_in = m_identidad
+    m_id = m_identidad
+    # ________________________________
+    
     #if verificar_m(m_n)==True:
-    tam = len(m_n)
+    tam = len(m_n) # tamaño de la matriz
+    cant = -1
     for i in range(tam):
-        #print(m_n[i][i])
+        for k in range(tam):
+            if k > cant:
+                #print("k: ",k,"cant: ",cant, "i: ",i)
+                if k == i : #encontra la diagonal 
+                    if m_n[k][k] !=1:
+                        divi = []
+                        divi_id = []
+                        d = m_n[k][k]
+                        for j in range(tam):
+                            divi += [round( m_n[k][j]/d , 2)]
+                            divi_id += [round( m_id[k][j]/d , 2)]
+                        m_n[k] = divi
+                        m_id[k] = divi_id
+                if k !=i:
+                    print("i: " , i , "k: " , k)
+                    #print(m_n[i][i] , m_n[k][i])
+                    nums = [m_n[i][i] , m_n[k][i] ]
+                    posi = [i , k]
+                    m_inversa(nums , posi)
+        print(m_n)
         
-        dg = m_n[i][i]
-        print(dg)
-        
-        opera = []
-        opera_2 = []
-        for k in range(i):
-            print("aaa", k)
-        if dg != 1:
-            print("1111")    
-            #---- cambiar las diagonales por UNO -----
-            '''for j in range(len(m_n)):
-                opera += [round(m_n[i][j]/dg , 2)]
-                opera_2 += [round(m_in [i][j]/dg , 2)]
-            m_n[i] = opera
-            m_in[i] = opera_2'''
-                
-            #-------------------------------------------------
-        else:
-            print("22222")
-            
-
+                #print("i , i: ",m_n[i][i])
+                #print("k , i: ",m_n[k][i])
+                #print("i , k: ",m_n[i][k])
+                #print("k , k: ",m_n[k][k],"\n")
+        cant += 1
       
+            #nums = [m_n[i][k] , m_n[k][k] ]
+            #posi = [i , k]
+            #m_inversa(nums , posi)
+
 matriz_inversa (matriz_ori , matriz_iden)
 #print(matriz_ori)
+print("\n MATRIZ ")
 imprimir_matriz(matriz_ori)
-
+print("")
+print("MATRIZ IDENTIDAD")
+imprimir_matriz(matriz_iden)
       
 
 
