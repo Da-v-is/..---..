@@ -1,6 +1,8 @@
-#matriz_ori = [ [ 1 , 2 ,3 ] , [ 4, 5 , 6 ] , [ 7 , 8 , 9 ] ]
-matriz_ori = [ [ 1 , 1 ,3 ] , [ 1, 0 , 1 ] , [ 1 , -2 , -1 ] ]
-#matriz_ori = [ [ 1 , 1 ,3 ] , [ 0, 1 , 2 ] , [ 0 , 0 , 1 ] ]
+#matriz_ori = [[1,2,4,3,2],[1,1,3,2,3],[0,2,1,3,2],[0,0,1,0,3],[0,0,0,-1,-8]] # 5x5
+matriz_ori = [ [ 1 , 1 ,3 ] , [ 1, 0 , 1 ] , [ 1 , -2 , -1 ] ] # 3x3
+#matriz_ori = [[1,-2,2,2],[0,4,-2,1],[1,-2,4,0],[1,-1,2,2] ] #4x4
+#matriz_ori = [[2,1,3],[-1,2,4],[0,1,3]] # 3x3
+
 def imprimir_matriz (matriz_final):
     for i in range(len(matriz_final)):
         a = ''
@@ -10,7 +12,23 @@ def imprimir_matriz (matriz_final):
                 a += '  '
         print(a)
         
-            
+def print_matrices (matriz , matriz_id):
+    for i in range(len(matriz)):
+        a = ''
+        
+        for j in range(len(matriz)):
+            a += str(matriz[i][j])
+            if j < len(matriz)-1:
+                a += '  '
+                
+        a += "  |  "   
+        for k in range(len(matriz)):
+            a += str(matriz_id[i][k])
+            if k < len(matriz)-1:
+                a += '  '
+                
+        print(a)
+                
 def matriz_identidad (matriz_o):
     matriz_iden = []
     for i in range(len(matriz_o)):
@@ -22,150 +40,130 @@ def matriz_identidad (matriz_o):
                 m_resul += [0]
         matriz_iden += [m_resul]
     return(matriz_iden)
-    #imprimir_matriz (matriz_iden)
-matriz_iden = matriz_identidad (matriz_ori)
 
-############################################
+##################################################################
 
-def determinante (valor_1 , valor_2,m_copia,): # solo determinante
+def determinante (valores , posicion ,m_co):# valores | posicion | matriz copia
     #=====CAMBIOS DE NOMBRE=====
-    val = valor_1[ 0 ]
-    diag = valor_1[ 1 ]
-    v = valor_2[0] # i
-    d = valor_2[1] # j
-    m_o = m_copia
+    val = valores[ 0 ]
+    diag = valores[ 1 ]
+    v = posicion[0] # i
+    d = posicion[1] # j
     #=========================
-    #print(m_o)
     m_resul = []
-    m_resul_id = []
-    if diag%val == 0:
-        x = diag//val
-        for j in range(len(m_o)):
-            m_resul += [-m_o[d][j] * 1 + m_o[v][j] * x]
-        m_o[v] = m_resul
-        
-        #print(m_resul)
-        
-    elif val%diag == 0:
-        x = val//diag
-        for j in range(len(m_o)):
-            m_resul += [-m_o[d][j] * x + m_o[v][j] * 1]
-        m_o[v] = m_resul
-        
-        #print(" ")
-
-    elif val%2 !=0 and diag%2==0:
-        for j in range(len(m_o)):
-            m_resul += [- m_o[d][j] * val + m_o[v][j] * diag]
-        m_o[v] = m_resul
-        
-        #print(m_resul)
-        #print(m_resul_id)
-        
-    elif diag%2 !=0 and val%2==0:
-        for j in range(len(m_o)):
-            m_resul += [- m_o[d][j] * val + m_o[v][j] * diag]
-        m_o[v] = m_resul
-        iden[v] = m_resul_id
-        #print(m_resul)
-        #print(m_resul_id)
     
-        
-########################################
+    if val != 0:
+        if diag%val == 0:
+            x = diag//val
+            for j in range(len(m_co)):
+                m_resul += [-m_co[d][j] * 1 + m_co[v][j] * x]
+            m_co[v] = m_resul
+            
+        elif val%diag == 0 :
+            x = val//diag
+            for j in range(len(m_co)):
+                m_resul += [-m_co[d][j] * x + m_co[v][j] * 1]
+            m_co[v] = m_resul
+            
+        else:
+            for j in range(len(m_co)):
+                m_resul += [-m_co[d][j] * val + m_co[v][j] * diag]
+            m_co[v] = m_resul
+
+##################################################################
 
 def verificar_m (matriz):
-    imprimir_matriz (matriz_ori)
     n = matriz
     filas = len(n)
     columnas = len(n[0])
+    
     if filas == columnas:
-        num_ceros = ((filas*columnas) -filas) // 2 #cantidad de numeros para convertir en ceros
-        determi = 1
-        c = list(n)
-        for i in range(num_ceros):
-            for j in range(i):
-                a = [c[ i ][ j ],c[ j ][ j ]]
-                b = [ i , j ]
-                #print("Valor = ",c[ i ][ j ],"  Diagonal = ",c[ j ][ j ])
-                determinante (a , b , c )
-        #imprimir_matriz(c)
+        cant = -1 
+        determi = 1 # es 1 para poder multiplicar
+        c = list(n) # copia de la matriz
         
-        for h in range(filas):
-            determi *=c[h][h]
+        for i in range(len(c)):# columnas
+            for j in range(len(c)):# filas 
+                if j > cant:
+                    if j != i:
+                        a = [c[ j ][ i ],c[ i ][ i ]] # 01 | 00 
+                        b = [ j , i ] 
+                        determinante (a , b , c )
+            cant += 1 
+        
+        for h in range(filas):# recorre la diagonal
+            determi *= c[h][h] # multiplica
         #print(determi)
+        
         if determi != 0:
             return True
         else:
             return False
+        
 #######################################
 
 def m_inversa (numero ,posicion):
     #======= MENU =======
-    ma_o = matriz_ori # no
-    ma_i = matriz_iden
+    # ma_o = matriz_ori 
+    # ma_i = matriz_iden
     val = numero[ 0 ] # numeros de las esquinas
     diag = numero[ 1 ] # numeros de la diagonal
-    n_v = posicion[ 0 ]#i
-    n_d = posicion[ 1 ]#k
-    #print("a: ",n_v,"    b",n_d)
-    #print("val: ",val,"diag: ",diag)
-    
+    n_v = posicion[ 0 ]#k
+    n_d = posicion[ 1 ]#i
     #===================
     resta = []
     resta_i = []
-    for j in range(len(ma_o)):
-        resta += [-ma_o[n_v][j]*diag + ma_o[n_d][j]*val]
-        resta_i += [-ma_i[n_v][j]*diag + ma_i[n_d][j]*val]
-        
-       #print( -ma_o[n_v][j],diag ," + ", ma_o[n_d][j],val )
-    #print(resta,n_d)
-    ma_i[n_d] = resta_i
-    ma_o[n_d] = resta
     
-        
+    for j in range(len(matriz_ori)):
+        resta += [round(-matriz_ori[n_v][j]*diag + matriz_ori[n_d][j]*val,2)]
+        resta_i += [round(-matriz_iden[n_v][j]*diag + matriz_iden[n_d][j]*val,2)]
     
-def matriz_inversa(m_normal , m_identidad):# matriz final
-    # ______ Cambiar Nombre _______
-    m_n = m_normal
-    m_id = m_identidad
-    # ________________________________
+    matriz_iden[n_d] = resta_i # matriz identidad
+    matriz_ori[n_d] = resta # matriz original
     
+    print(" ------------ ")
+    print_matrices (matriz_ori , matriz_iden)
+    #print(" ------------ ")
+    
+def matriz_inversa(m_n,m_id):# matriz final 
     if verificar_m(m_n)==True:
         tam = len(m_n) # tamaño de la matriz
         cant = -1
-        for i in range(tam):
-            for k in range(tam):
-                if k > cant:
-                    #print("k: ",k,"cant: ",cant, "i: ",i)
-                    if k == i : #encontra la diagonal 
-                        if m_n[k][k] !=1:
-                            divi = []
+        
+        for i in range(tam): # columnas
+            for k in range(tam): # filas
+                if k > cant: # solo toma esta parte ◣ de la matriz 
+                    if k == i : # solo lo numeros de la diagonal ╲ 
+                        if m_n[k][k] !=1: # si los valores de la  ╲ es diferente de 1
+                            divi = [] 
                             divi_id = []
-                            d = m_n[k][k]
+                            d = m_n[k][k] 
+                            
                             for j in range(tam):
                                 divi += [round( m_n[k][j]/d , 2)]
                                 divi_id += [round( m_id[k][j]/d , 2)]
                             m_n[k] = divi
                             m_id[k] = divi_id
-                    if k !=i:
-                        #print("i: " , i , "k: " , k)
-                        #print(m_n[i][i] , m_n[k][i])
+                            
+                    if k !=i:# toma los valores de abajo de la diagonal 
                         nums = [m_n[i][i] , m_n[k][i] ]
                         posi = [i , k]
                         m_inversa(nums , posi)
-            #print(m_n)
             cant += 1
-
-        for a in range(tam):
-            for b in range(a):
+        # toma estos valores ◥, de la matriz
+        for a in range(tam):# columnas
+            for b in range(a):# filas
                 valores = [ m_n[a][a] , m_n[b][a] ]
                 posi_ = [a , b]
                 m_inversa(valores , posi_)
     else:
-        print("NO puede ser una matriz inversas")
-            
+        print("NO puede ser una matriz inversa")
+        
+imprimir_matriz(matriz_ori)
+
+matriz_iden = matriz_identidad (matriz_ori)
 matriz_inversa (matriz_ori , matriz_iden)
-#print(matriz_ori)
+
 print("\n MATRIZ ")
 imprimir_matriz(matriz_ori)
 print("\n MATRIZ IDENTIDAD")
